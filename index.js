@@ -27,6 +27,11 @@ app.get('/', (req, res) => {
   res.send('meat-OS backend running');
 });
 
+// Health check route (add this before app.listen)
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', message: 'Server is running' });
+});
+
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
