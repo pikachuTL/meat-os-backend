@@ -20,13 +20,42 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { name } = req.body;
-    const image = req.file ? req.file.path : '';
+    // Always save relative path, extract just the filename and folder
+    let image = '';
+    if (req.file) {
+      image = `category/${req.file.filename}`;
+    }
+    console.log('Original path:', req.file?.path);
+    console.log('Saved image path:', image);
+    
     const category = new Category({ name, image });
     await category.save();
     res.status(201).json(category);
   } catch (err) {
     console.error('Error in POST /api/category:', err);
     res.status(500).json({ message: 'Error creating category', error: err.message });
+  }
+});
+
+// Test route to check image upload
+router.post('/test-upload', upload.single('image'), async (req, res) => {
+  try {
+    console.log('File received:', req.file);
+    console.log('File path:', req.file?.path);
+    console.log('File filename:', req.file?.filename);
+    
+    const imagePath = req.file ? `category/${req.file.filename}` : '';
+    console.log('Saved image path:', imagePath);
+    
+    res.json({ 
+      message: 'Test upload successful',
+      file: req.file,
+      savedPath: imagePath,
+      fullUrl: req.file ? `https://meat-os-backend-production.up.railway.app/uploads/${imagePath}` : ''
+    });
+  } catch (err) {
+    console.error('Error in test upload:', err);
+    res.status(500).json({ message: 'Error in test upload', error: err.message });
   }
 });
 
@@ -45,7 +74,14 @@ router.get('/', async (req, res) => {
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { name } = req.body;
-    const image = req.file ? req.file.path : undefined;
+    // Always save relative path, extract just the filename and folder
+    let image = undefined;
+    if (req.file) {
+      image = `category/${req.file.filename}`;
+    }
+    console.log('Original path:', req.file?.path);
+    console.log('Saved image path:', image);
+    
     const updateData = { name };
     if (image) updateData.image = image;
     const category = await Category.findByIdAndUpdate(

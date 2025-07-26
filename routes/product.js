@@ -24,7 +24,14 @@ const upload = multer({ storage: storage });
 router.post('/', upload.single('image'), async (req, res) => {
   try {
     const { name, category, price, unit, description, available } = req.body;
-    const image = req.file ? req.file.path : '';
+    // Always save relative path, extract just the filename and folder
+    let image = '';
+    if (req.file) {
+      image = `product/${req.file.filename}`;
+    }
+    console.log('Original path:', req.file?.path);
+    console.log('Saved image path:', image);
+    
     const product = new Product({ name, category, image, price, unit, description, available });
     await product.save();
     res.status(201).json(product);
@@ -49,7 +56,14 @@ router.get('/', async (req, res) => {
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { name, category, price, unit, description, available } = req.body;
-    const image = req.file ? req.file.path : undefined;
+    // Always save relative path, extract just the filename and folder
+    let image = undefined;
+    if (req.file) {
+      image = `product/${req.file.filename}`;
+    }
+    console.log('Original path:', req.file?.path);
+    console.log('Saved image path:', image);
+    
     const updateData = { name, category, price, unit, description, available };
     if (image) updateData.image = image;
     const product = await Product.findByIdAndUpdate(

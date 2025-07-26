@@ -44,6 +44,15 @@ app.use('/api/product', productRoutes);
 const orderRoutes = require('./routes/order');
 app.use('/api/order', orderRoutes);
 
+const paymentRoutes = require('./routes/payment');
+app.use('/api/payment', paymentRoutes);
+
+const deliveryRoutes = require('./routes/delivery');
+app.use('/api/delivery', deliveryRoutes);
+
+const perKmRateRoutes = require('./routes/perkmrate');
+app.use('/api/perkmrate', perKmRateRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }); 
